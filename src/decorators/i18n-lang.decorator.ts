@@ -1,8 +1,31 @@
-import { createParamDecorator } from '@nestjs/common';
-import { I18nContext } from '../i18n.context';
+import { createParamDecorator, ExecutionContext, Logger } from '@nestjs/common';
 
-export const I18nLang = createParamDecorator((data, context) => {
-  const i18n = I18nContext.current(context);
+const logger = new Logger('I18nLang');
 
-  return i18n.lang;
+const getContextObject = (context: ExecutionContext) => {
+  switch (context.getType() as string) {
+    case 'http':
+      return context.switchToHttp().getRequest();
+    case 'graphql':
+      return context.getArgs()[2];
+    case 'rpc':
+      return context.switchToRpc().getContext();
+    case 'rmq':
+      return context.getArgs()[1];
+    default:
+      logger.warn(`context type: ${context.getType()} not supported`);
+  }
+};
+
+export const I18nLang = createParamDecorator(function (
+  data,
+  context: ExecutionContext,
+) {
+  const ctx = getContextObject(context);
+
+  if (!ctx) {
+    throw Error(`context type: ${context.getType()} not supported`);
+  }
+
+  return ctx.i18nLang;
 });

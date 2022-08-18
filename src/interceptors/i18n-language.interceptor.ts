@@ -1,12 +1,15 @@
 import {
+  CallHandler,
+  ExecutionContext,
   Inject,
   Injectable,
-  Type,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
+  Type,
 } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+import { Observable } from 'rxjs';
 import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
+
 import {
   I18nContext,
   I18nOptions,
@@ -14,10 +17,9 @@ import {
   ResolverWithOptions,
 } from '../index';
 import { I18nService } from '../services/i18n.service';
-import { ModuleRef } from '@nestjs/core';
 import { shouldResolve, getContextObject } from '../utils';
 import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
-import { Observable } from 'rxjs';
+import { I18nContextService } from '../services/i18n-context.service';
 
 @Injectable()
 export class I18nLanguageInterceptor implements NestInterceptor {
@@ -27,6 +29,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     @Inject(I18N_RESOLVERS)
     private readonly i18nResolvers: I18nOptionResolver[],
     private readonly i18nService: I18nService,
+    private readonly i18nContextService: I18nContextService,
     private readonly moduleRef: ModuleRef,
   ) {}
 
@@ -37,7 +40,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     const i18nContext = I18nContext.current();
     let language = null;
 
-    const ctx = getContextObject(this.i18nOptions,context);
+    const ctx = this.i18nContextService.getContextObject(context);
 
     // Skip interceptor if language is already resolved (in case of http middleware) or when ctx is undefined (unsupported context)
     if (ctx === undefined || !!ctx.i18nLang) {

@@ -9,6 +9,7 @@ import {
 import { I18nResolver } from './i18n-language-resolver.interface';
 import { I18nLoader } from '../loaders';
 import { ValidatorOptions } from 'class-validator';
+import { I18nCustomContext } from './i18n-custom-context.interface';
 
 export interface OptionsProvider {
   options: any;
@@ -44,6 +45,7 @@ export interface I18nOptions {
   fallbackLanguage: string;
   fallbacks?: { [key: string]: string };
   resolvers?: I18nOptionResolver[];
+  contexts?: I18nCustomContext[];
   loader?: Type<I18nLoader>;
   loaderOptions: any;
   formatter?: Formatter;
@@ -70,6 +72,7 @@ export interface I18nAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
     ...args: any[]
   ) => Promise<I18nOptionsWithoutResolvers> | I18nOptionsWithoutResolvers;
   resolvers?: I18nOptionResolver[];
+  contexts?: I18nCustomContext[];
   loader?: Type<I18nLoader>;
   inject?: any[];
   logging?: boolean;
