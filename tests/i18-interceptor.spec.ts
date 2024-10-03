@@ -3,9 +3,9 @@ import { Test } from '@nestjs/testing';
 import * as path from 'path';
 import {
   I18nContextService,
-  I18nLanguageInterceptor,
   I18nModule,
   I18nService,
+  I18nLanguageInterceptor,
   I18N_OPTIONS,
   I18N_RESOLVERS,
 } from '../src';
